@@ -1,10 +1,9 @@
-﻿## 开始使用git
-1. CMD open the directory of C:\Program Files\Git\usr\bin
-2. Key in:     ssh-keygen -t rsa -b 4096 -C "xxx@xxx.com"
-3. C:\Users\username\.ssh\id_rsa.pub 的内容在 github Account SSH
-4. 测试: ssh -T git@github.com -> Hi XXX! You've successfully authenticated, but GitHub does not provide shell access.
-5. git config --global user.name "your name"
-6. git config --global user.email "your_email@youremail.com"
-
-7. 去到要上传的folder下， git init -> 生成隐藏的.git folder
-8. git remote add origin git@github.com:FHeaven/study-notes.git 关联到github
+﻿## Start to use git
+1. CMD open the directory of C:\Program Files\Git\usr\bin, or use Git Bash directly
+2. Input ssh-keygen -t rsa -b 4096 -C "xxx@xxx.com" to generate SSH key
+3. Copy the SSH key from C:\Users\username\.ssh\id_rsa.pub to create SSH key in github(Profile>Settings>SSH>Add Key)
+4. Testing by input ssh -T git@github.com, then should see the message "Hi XXX! You've successfully authenticated, but GitHub does not provide shell access."
+5. Binding github account: git config --global user.name "github account"
+6. Binding github email: git config --global user.email "your_email@youremail.com"
+7. Initial git local repository using "git init"
+8. Let local repository relate to github repository using "git remote add origin git@github.com:FHeaven/study-notes.git"
