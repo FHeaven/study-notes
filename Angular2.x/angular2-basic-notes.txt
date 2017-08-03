@@ -1,0 +1,282 @@
+# https://angular.cn/docs/ts/latest/guide/animations.html
+
+# Angular的8个组成模块：
+.Modules(模块), Components(组件), Templates(模板), Metadata(元数据), Data binding(数据绑定), Directives(指令), Services(服务), Dependency Injection(依赖注入)
+
+# Angular的Module
+.模块在定义时，都会带 @NgModule装饰器(Decorator)的类
+.Angular有自己的Module, 称为 Angular Module 或 NgModule
+.一个应用程序至少有一个Module，这个称为Root Module(根模块)，AppModule
+.其它于业务相关的模块称为 feature module，特性模块(可以Lazyload)
+.装饰器的作用是，为类定义元数据，以了解这些类的设计意图和如何工作
+
+
+# NgModule的重要属性
+.imports: 导入当前Module所需的其它Module
+.declarations: 声明当前Module所用到的视图类(NgModule类, Service类, 模型类除外)： Components, Directives, Pipes(管道：price | currency:'USD':true)
+.exports: declarations的子集，用于把当前Module的视图类开放给其它的Module
+.providers: 把services开放到其它模块
+.bootstrap: 设置要开始启动的component, 也称为 root component, 只有在AppModule中才可定义bootstrap, 也就是一个APP只有一个bootstap
+
+@NgModule({
+ import: [BrowserComponent],
+ declarations: [AppComponent],
+ exports: [AppComponent], //只是demo一下, 实际上 AppModule不会称为其它Module的Import, 所以，没必要exports AppModule的Component
+ providers: [Logger],
+ bootstrap: [AppComponent]
+})
+export class AppModule{}
+
+# bootstrap
+.APP可以同时bootstrap多个Component
+.这些Component将会成为与之相关的Root Component, 启动之后, 会以该component形成component tree，并显示到index.html
+.bootstrap的components应该和index.html的tags对应
+
+
+# 如何启动AppModule
+.通常会在一个ts文档中，引导启动AppModule
+.如Main.ts, 即时(Just-in-Time JIT)编译器动态编译应用
+ > import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+ > import { AppModule } from './app/app.module';
+ > platformBrowserDynamic().bootstrapModule(AppModule);
+
+
+#Components的意义
+.Component用于控制视图, 通过Modal和Event与View进行交互, 相当于AngularJS的controller
+.User在访问不同的功能模块时，Components会不停地Create, Update, Destroy
+.Root Component(AppComponent) => Child Component(HeroListComponent) => GrandChild Component(HeroDetailComponent)
+
+
+# Templates的意义
+.Component对应的HTML文档
+
+# Metadata的意义
+.元数据告诉Angular怎么处理一个Class
+.TypeScript通过装饰器附加元数据
+.providers用于告诉Angular, 要初始化这个类, 要在构造函数注入哪些service
+
+@Component({
+  selector: 'app-xxx',
+  template: ``,
+  styleCss:
+  templateUrl: '',
+  styleUrl: [],
+  providers: [xxxService]
+})
+export class AppComponent{}
+
+# 一个视图的组成
+. Metadata + Component + Template(CSS)
+
+## 常用的装饰器有哪些
+.@Component, @Injectable, @Input, @Output
+
+# 四种Bindings
+.插值绑定： {{name}} ==> component -> template
+.属性绑定： [property] = 'name' ==> component -> template
+.事件绑定: (click)="get()" ==> template -> component
+.双向绑定： [(ngModule)] = 'name' ==> template <--> component
+
+# Directives
+.Angular在周期性对DOM进行调整，是根据指令提供的操作进行的
+.Components是继承于Directives的一个特殊指令(带Template的指令), 也就是说@Component继承了@Directive
+.除了Components, 指令还有： 结构性指令和属性指令
+.结构性指令: *ngIf, *ngFor, ngSwitch, ngStyle, ngClass
+.属性指令: [ngModule]="xxx"
+*ngIf和AngularJS的ng-if效果一样，会直接从DOM删除或添加，比ng-show具有更高性能
+
+# Services
+.服务负责单一性的功能，提供值，函数，或者某个用途
+.服务主要为Component提供服务
+.尽量让Component轻松一点，把琐事都让Service帮忙
+
+# Dependency Injection
+.注入器维护了一个服务实例的容器，存放以前建好的实例
+.如果没有Create, 那就立刻Create, 并上传给Angular, 给当前Component使用同时放到容器
+.要在providers告诉angular, 你要在injector创建哪些service的实例
+.通常会在root module的providers声明service, 这样其它的component就可以共用同一个实例
+.在上面介绍@Component时, 有提到它也有providers的属性，但是在这里注册，那每次component被调用，都会新建service的实例
+
+
+# Angular的其它特性：
+Animations(动画), Change Detection(变更检测), Events(事件), Forms(表单), HTTP, Lifecycle Hooks(生命周期钩子), Pipes(管道), Routing(路由器), Testing(测试)
+
+# 常用的Module
+.BrowserModule: 每个在浏览器运行的APP都要这个Module
+
+# 关于event
+.常用: click, keyup, blur
+.$event传递用户信息: (click)="myClick($event)"
+.不建议把$event传到component, 因为component会知道更多DOM(template负责), 因此开放给Component直接操作DOM的选择；这样违背的单一原则
+.可以使用模板引用变量, 在template自包含地完成该完成的
+.分析以下的代码：
+<input #box (keyup)="0"> ## 定义了模板引用变量(template reference variable) box, 在template, 它就是一个变量, 表示整个tag对象; (keyup)="0",因为angular的modal变化必须有所触发才会发生, 所以定义了keyup的event, 但是又不做任何事, 来触发angular box.value的变化
+<p>{{box.value}}</p>
+.在写AngularJS时, 监控enter的action是当$event的value=Enter时, 才执行具体的action;但是在Angular的话, 很简单:
+<input #box (keyup.enter)="0" placeholder="Press enter to show...">
+<p>{{box.value}}</p>
+.模板引用变量定义之后，可以在兄弟节点或子节点使用，应该兄弟节点的子节点也可以用到
+.尽量传递元素(html tag 模板引用变量)的数值，而不要把整个元素传递过去
+
+
+# @Injectable() 
+.表示某个service是可以注入其它service的
+.假如没有这个装饰器, 则会提示错误
+.提议无论service有没有要注入其它service, 都写上@Injectable(), 理由：
+  > 面向未来: 没有必要记得在后来添加依赖的时候添加 @Injectable()。
+  > 一致性:所有的服务都遵循同样的规则，不需要考虑为什么某个地方少了一个。
+.Components不是也要注入service吗, 为什么它不用@Injectable? 因为@Component, @Directive, @Pipe都已经继承@Injectable()了
+
+# providers
+.Injector需要providers为service创建实例, 然后Injector再把这些实例注入到components和services
+.所以必须为service提供一个providers(module或者component的providers)
+.providers的一般写法: providers: [Logger] ==> 这表示: 注入的名称和被注入的类名都是Logger
+.providers的详细写法：providers: [{provide: Logger, useClass: OtherLogger}] ==> 这表示注入的名称是Logger, 但实际指向的Class是OtherLogger
+.通过providers的详细写法, 动态指定要注入的真实的service, 这就达到了Injectable的真正目的 -> 切换service时, 不需要改到代码
+
+# 故事情景
+假如某Project一直使用 OldLogger记录log, 使用的是 providers: [OldLogger]来注册提供商, 这表示在Component或者Service注入时, 使用的class name就是OldLogger; 后来, 由于新的需求, 要使用新的方式写log, 但是OldLogger又有其它原因不能改动, 于是新开辟了NewLogger, 希望无论是之前的逻辑还是以后的逻辑都要走NewLogger的逻辑, 但又不想改到原来写好OldLogger的字样, 又希望以后的开发者都用NewLogger的名字进行开发, 于是, 可以定义：
+providers: [
+  NewLogger,
+  {provider: OldLogger, useExisting: NewLogger}
+]
+
+useExisting ：不会再次创建NewLogger的实例, 而只是多加一个别名叫OldLogger
+useFactory的例子：
+providers: [
+ NewLogger,
+ HeroServiceProvider
+]
+$$ hero.service.provider.ts
+let BuildHeroServiceFactory = (logger: NewLogger, userService: UserService) => {
+ return new HeroService(logger, userService.getUser().isAuthorized);
+}
+
+export let HeroServiceProvider = {
+ {provider: HeroService, useFactory: BuildHeroServiceFactory, deps: [NewLogger, UserService]}
+}
+
+$$ hero.service.ts
+export class HeroService {
+  constructor(private logger: NewLogger, private isAuthorized: boolean){}
+  getHeroes(){
+    let auth = this.isAuthorized? 'authorized': 'unauthorized';
+    this.logger.log(`Getting heroes for ${auth} user....`);
+    return Heroes.filter(hero => {
+        return this.isAuthorized || !hero.isSecret;
+    });
+  }
+}
+
+# 建议
+.一个文档一个类(如果硬要多个类, 则把Component放到最后, 但极其不建议)
+
+# Templates Study
+.标签<script>被禁止了, 防止脚本注入的风险
+.<html>, <body>, <base>在Template中不会起到任何作用, 它们只适合生存于index.html
+.可以通过component和directive添加新的tag元素和attribute
+.安全导航操作符(The safe navigation operator) ?.
+  > 在template, 假如userInfo是Null或者undefined, 以下的写法会导致页面出错(这点比AngularJS严格三千尺): <p>{{UserInfo.userName}}</p>
+  > 于是就建议使用 <p>{{UserInfo?.userName}}</p> ##当UserInfo是Null或Undefined时, 返回''
+  > 链式写法更赞: <p>{{UserInfo?.department?.group?.groupLeader}}</p> ##哪个环节是null或者undefined, 直接返回''
+.在template中, 对象的名称假如在tempalte, directive, 对应component中相同, 使用的优先级是 tempalte > directive > component, 如 <li *ngFor="let hero of heroes">{{hero.name}}</li>, 尽管component也定义了一个hero, 这里的hero就是ngFor里面的hero
+<div *ngFor="let hero of heroes; let i=index">{{i + 1}} - {{hero.name}}</div>
+
+# Template Expression Guidleiness(表达式指南, 应该做到以下几点)
+.没有可见的副作用, 不应该影响到其它Model, 应该很稳定地渲染视图
+.执行迅速, 表达式在任何trigger下都被angular调用, 表达式中不应该执行过于复杂的计算
+.尽可能简单, 尽管可以写 {{X + Y + Z ..... + getValue()}}很复杂的表达式, 但建议尽量简单, 直接用属性, 直接调用简单的方法!
+.幂等表达式???, 最好就使用幂等表达式, 它应该总是返回完全相同的东西, 直到某个依赖发生变化; 数值型类型, 则value相同; 对象性类型, 则对象相同.
+
+# Template Statements(模板语句)
+.(event)="statement"
+
+# 三类数据流绑定方式:
+.从数据源到视图 -> [target]="expression" or bind-target="expression" -> 属性绑定(或者还有插值绑定)
+.从视图到数据源 -> (click)="showDetail()" or on-click="showDetail()" -> 事件绑定
+.从视图到数据源再到视图 -> <input [(ngModal)]="hero.name" > or <input bindon-ngModal="hero.name" > -> 双向绑定
+
+# 观念改变
+.要区别开HTML Attribute和DOM Property
+.<button type="button" disabled>button</button>: type和disabled属于html Attribute, 那是不可变的
+.<input type="text" value="xxx"> value是DOM的Property, 是可变的
+.Attribute在渲染DOM时, 初始化了DOM Property之后, 它的任务就完成了
+.数据绑定是通过property和事件来实现的, 而不是attribute
+.在angular的世界中, attribute只做初始化的动作, 其它时间, 它得靠边站
+
+# 绑定方式:
+.属性(Property)绑定 (Angular会去寻找directive的property, 然后在去看DOM的property)
+ > <img [src]="imageUrl" >
+ > <hero-detail [hero]='selectedHero'></hero-detail>
+ > <div [ngClass]="{special: isSpecial}">
+.事件(Event)绑定
+ > <button (click)="onSave($event)">save</button> $event.target.value || $event.target
+ > <hero-detail (deleteRequest)="deleteHero()"></hero-detail>
+.双向绑定
+ > <input [ngModel]="name" >
+.attribute绑定
+ > 当html Attribute没有对应的property给angular绑定时, angular开放了绑定 attribute的方式
+ > [attr.colspan]="headRowColSpan"
+.css类
+ > <div [class.special]="isSpecial">sepcial</div> 建议使用[ngClass]
+.样式
+ > <div [style.color]="isSpecial ? 'red' : 'blue'"> 建议使用[ngStyle]
+ > <button [style.font-size.%]="!isSpecial ? 150 : 50" >Small</button> => 有单位的情况
+ 
+ 
+# *ngFor的用法:
+.
+<div *ngFor="let hero of heroes; trackBy: trackByHeroes">
+  ({{hero.id}}) {{hero.name}}
+</div>
+trackByHeroes(index: number, hero: Hero): number { return hero.id; }
+.
+<div *ngFor="let hero of heroes; let i=index">{{i + 1}} - {{hero.name}}</div>
+
+# *ngSwitch的用法
+.ngSwitch也会从DOM中添加或移除元素
+<div [ngSwitch]="currentHero.emotion">
+  <happy-hero    *ngSwitchCase="'happy'"    [hero]="currentHero"></happy-hero>
+  <sad-hero      *ngSwitchCase="'sad'"      [hero]="currentHero"></sad-hero>
+  <confused-hero *ngSwitchCase="'confused'" [hero]="currentHero"></confused-hero>
+  <unknown-hero  *ngSwitchDefault           [hero]="currentHero"></unknown-hero>
+</div>
+
+ # 模板引用变量 #var 表示声明一个变量来引用 DOM元素
+ .定义的模板引用变量是全局有效的
+ #var和ref-var是一样的
+ 
+ 可以通过元数据指定@Input和@Output的属性
+ @Component({
+  inputs: ['hero'],
+  outputs: ['deleteRequest'],
+})
+
+NgUpgradeModule:
+.安装: cnpm install @angular/upgrade --save
+
+
+# 风格指南
+1.单一职责: Do define one thing, such as a service or component, per file(Do: 坚持)
+2.简单函数：Do define small and simple functions
+3.命名: Do use consistent names for all symbols(like file: feature.type.ts: hero-list.component.ts)
+4.使用dot seperate 描述性名字和类型: hero-list.component; 使用dash seperate 描述性名字: hero-list
+
+5.创建CoreModule, 把一些import都在CoreModule中导入, 并在RootModule中导入CoreModule
+6.把单例的Service都设计在CoreModule, 比如ExceptionService, Logger等, 不是Lozyloaded的Service
+7.避免在AppModule以外导入CoreModule
+
+8.使用Guard Against防止多次导入CoreModule
+export class CoreModule {
+  constructor( @Optional() @SkipSelf() parentModule: CoreModule) {
+    throwIfAlreadyLoaded(parentModule, 'CoreModule');
+  }
+}
+$$module-import-guard.ts
+export function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
+  if (parentModule) {
+    throw new Error(`${moduleName} has already been loaded. Import Core modules in the AppModule only.`);
+  }
+}
+9.和Avatar1一样, 功能模块的组件应该按需加载
+10.超过3行的templates或者styles, 就应该从component抽离出独立的文档
