@@ -1,0 +1,148 @@
+参考手册
+http://www.w3school.com.cn/cssref/index.asp
+		
+CSS3的属性：
+1.border-radius: 圆角边框 (:) 20px (原理:) 在四个角做a=20px的正方形, 然后以在原矩形里面的一个点为圆心画圆，得到的弧就是圆角边框
+2.box-shadow: 边框阴影 (:) 100px -10px 100px #888888 (:) 右阴影长(负数则向左) 下阴影长(负数则向上) 模糊长度 颜色
+3.border-image: 边框背景图片: (???)
+4.background-size: 背景图片的尺寸 (:) 100px 200px (或) 50% 100% (:) 宽 高
+5.background-origin: 决定背景从哪个区域开始绘画 (:) border-box (或) padding-box (或) content-box (:) border (或) padding (或) content
+6.background-clip: 真正决定哪些区域要显示 (:) border-box (或) padding-box (或) content-box (:) border (或) padding (或) content
+7.text-shadow: 字体阴影 (:) 5px -10px 100px #888888 (:) 右阴影长(负数则向左) 下阴影长(负数则向上) 模糊长度 颜色
+8.word-wrap: 指定单词太长的时候要不要换行 (:) normal(default) (或) break-word (:) 只允许在断字点换行 (或) 在长单词或URL地址换行(会换一行新行断词)
+9.break-word: 指定单词太长时怎么换行 (:) normal(default) (或) break-all (:) 使用默认的换行方式 (或) 允许在单词内换行(不会换一行新行断词)
+10.text-overflow: 当文本溢出包含元素时的处理 (:) clip (或) ellipsis (:) 超出则裁剪 (或) 使用省略符号(...)代表被裁剪的内容
+11.@font-face {
+	font-family: myCustomerFont,
+	src: url('Sansation_Light.ttf'), url('Sansation_Light.eot'); /*IE9+*/
+}
+自定义font family, Sansation_Light.ttf 和 Sansation_Light.eot只需放到server(如nginx), 用户不必再按照就可以使用
+
+12.transform(转换): [translate(50px, 100px) | translateX(50px) | translateY(100px)] (:移动元素) [scale(2, 3) | scaleX(2) | scaleY(3)](:改变元素的width和height, 参数是倍数) [rotate(30deg)](:逆时针旋转的角度) [skew(30deg, 20deg) | skewX(30deg) | skewY(20deg)] (:与向X轴或Y轴方向倾斜一定的角度)
+
+transform: rotate(30deg); 
+-ms-transform: rotate(30deg);		/* IE 9 */
+-webkit-transform: rotate(30deg);	/* Safari and Chrome */
+-o-transform: rotate(30deg);		/* Opera */
+-moz-transform: rotate(30deg);		/* Firefox */
+
+13.transition(过渡): 过渡是元素从一种样式逐渐改变为另一种的效果
+.规定您希望把效果添加到哪个 CSS 属性上
+.规定效果的时长
+可以多个设置一起：
+div
+{
+width:100px;
+height:100px;
+transition: width 2s, height 2s, transform 2s;
+-moz-transition: width 2s, height 2s, -moz-transform 2s;
+-webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+-o-transition: width 2s, height 2s,-o-transform 2s;
+}
+div:hover {
+width:200px;
+height:200px;
+transform: rotate(180deg);
+-moz-transform:rotate(180deg); /* Firefox 4 */
+-webkit-transform:rotate(180deg); /* Safari and Chrome */
+-o-transform:rotate(180deg); /* Opera */
+}
+
+transition: width 1s linear 2s; (:) 改变宽度, 持续时间是1s, 线性速度, 2s之后执行
+linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier(n,n,n,n)
+
+值	描述
+linear	规定以相同速度开始至结束的过渡效果（等于 cubic-bezier(0,0,1,1)）。
+ease	规定慢速开始，然后变快，然后慢速结束的过渡效果（cubic-bezier(0.25,0.1,0.25,1)）。
+ease-in	规定以慢速开始的过渡效果（等于 cubic-bezier(0.42,0,1,1)）。
+ease-out	规定以慢速结束的过渡效果（等于 cubic-bezier(0,0,0.58,1)）。
+ease-in-out	规定以慢速开始和结束的过渡效果（等于 cubic-bezier(0.42,0,0.58,1)）。
+cubic-bezier(n,n,n,n)	在 cubic-bezier 函数中定义自己的值。可能的值是 0 至 1 之间的数值。
+
+14.动画:
+@keyframes规则用于创建动画, 在 @keyframes 中规定某项 CSS 样式，就能创建由当前样式逐渐改为新样式的动画效果
+@keyframes myfirst
+{
+  from {background: red;}
+  to {background: yellow;}
+}
+@-webkit-keyframes myfirst
+{
+from {background: red;}
+to {background: yellow;}
+}
+
+div
+{
+animation: myfirst 5s;
+-webkit-animation: myfirst 5s;
+}
+animation: myfirst 5s linear 2s infinite alternate; (:) 执行动画myfirst 持续5s 线性执行 延迟2s执行 无限执行 style状态从0到1之后从1到0
+
+animation-name: myfirst;
+animation-duration: 5s; (default: 0s)
+animation-timing-function: linear; (default ease)
+animation-delay: 2s; (default 0s)
+animation-iteration-count: infinite; (default 1) 执行次数
+animation-direction: alternate; (default: normal (:)0>1, 0>1) alternate: 0>1>0 
+animation-play-state: 可以停止或者启动动画(:) paused (或) running (:javascript:) object.style.animationPlayState="paused"
+animation-fill-mode: 属性规定动画在播放之前或之后，其动画效果是否可见 (:)none | forwards | backwards | both (:javascript:)object.style.animationFillMode=none
+
+
+请用百分比来规定变化发生的时间，或用关键词 "from" 和 "to"，等同于 0% 和 100%。
+0% 是动画的开始，100% 是动画的完成。
+为了得到最佳的浏览器支持，您应该始终定义 0% 和 100% 选择器。
+
+@keyframes myfirst
+{
+0%   {background: red;}
+25%  {background: yellow;}
+50%  {background: blue;}
+100% {background: green;}
+}
+
+15.多列？？？？
+16.用户界面？？？
+
+
+background-clip background-origin的差别：
+background-origin: border-box; background-clip:padding-box; (得出:) 图是从边框开始画, 但只显示padding开始的内容, 也就是border上的内容会被裁掉；background-origin: padding-box; background-clip:border-box; (得出:) 图从padding开始画, 但从border开始显示, 因此border(左上下)按原本的显示, border右还是会填充background, 因为绘画会从左边开始过来, 也就是说 background-origin决定的是绘画的开始点, 没有决定其结束点.
+
+word-wrap:break-word 和 word-break:break-all的区别
+word-wrap:break-word与word-break:break-all共同点是都能把长单词强行断句，不同点是word-wrap:break-word会首先起一个新行来放置长单词，新的行还是放不下这个长单词则会对长单词进行强制断句；而word-break:break-all则不会把长单词放在一个新行里，当这一行放不下的时候就直接强制断句了。
+
+
+[attribute]    用于选取带有指定属性的元素。    
+[attribute=value]    用于选取带有指定属性和值的元素。    
+[attribute~=value]    用于选取属性值中包含指定词汇的元素。    
+[attribute|=value]    用于选取带有以指定值开头的属性值的元素，该值必须是整个单词。    
+[attribute^=value]    匹配属性值以指定值开头的每个元素。    
+[attribute$=value]    匹配属性值以指定值结尾的每个元素。    
+[attribute*=value]    匹配属性值中包含指定值的每个元素。    
+
+
+下面的例子为包含指定值的 title 属性的所有元素设置样式。适用于由空格分隔的属性值：
+[title~=hello] { color:red; }
+
+下面的例子为带有包含指定值的 lang 属性的所有元素设置样式。适用于由连字符分隔的属性值：
+[lang|=en] { color:red; }
+
+~=其中的value必须是一个独立的单词，例如 [title~=test] 中 test a可以被选中testa不能被选中．
+*=其中的value只要是值的子串就可以，例如test-a，test a和testa均可以被选中．
+|=与~=的特性一样，^=与*=的特性一样．因此平时还是用^=和*=较好．
+
+	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。
+		p:before	在每个 <p> 元素的内容之前插入内容
+		p:after	在每个 <p> 元素的内容之后插入内容
+
+
+
+border-radius:25px;
+-moz-border-radius:25px; /* Old Firefox */
+border-top-left-radius: 10px 20px; 表示水平和垂直的半径, 也就是在原矩形左上角画相切的矩形
+
+
+border-image:url(border.png) 30 30 round;
+-moz-border-image:url(border.png) 30 30 round; /* 老的 Firefox */
+-webkit-border-image:url(border.png) 30 30 round; /* Safari 和 Chrome */
+-o-border-image:url(border.png) 30 30 round; /* Opera */
