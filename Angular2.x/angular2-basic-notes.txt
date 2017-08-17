@@ -2,39 +2,61 @@
 
 # Angular的8个组成模块：
 .Modules(模块), Components(组件), Templates(模板), Metadata(元数据), Data binding(数据绑定), Directives(指令), Services(服务), Dependency Injection(依赖注入)
-
+    
 # Angular的Module
-.模块在定义时，都会带 @NgModule装饰器(Decorator)的类
+.模块在定义时, 都会带 @NgModule装饰器(Decorator)的类
 .Angular有自己的Module, 称为 Angular Module 或 NgModule
-.一个应用程序至少有一个Module，这个称为Root Module(根模块)，AppModule
-.其它于业务相关的模块称为 feature module，特性模块(可以Lazyload)
-.装饰器的作用是，为类定义元数据，以了解这些类的设计意图和如何工作
+.一个应用程序至少有一个Module, 这个称为Root Module(根模块), AppModule
+.其它于业务相关的模块称为 feature module, 特性模块(可以Lazyload)
+.装饰器的作用是, 为类定义元数据, 以了解这些类的设计意图和如何工作
 
 
 # NgModule的重要属性
 .imports: 导入当前Module所需的其它Module
 .declarations: 声明当前Module所用到的视图类(NgModule类, Service类, 模型类除外)： Components, Directives, Pipes(管道：price | currency:'USD':true)
-.exports: declarations的子集，用于把当前Module的视图类开放给其它的Module
+.exports: declarations的子集, 用于把当前Module的视图类开放给其它的Module
 .providers: 把services开放到其它模块
 .bootstrap: 设置要开始启动的component, 也称为 root component, 只有在AppModule中才可定义bootstrap, 也就是一个APP只有一个bootstap
+bootstrap有两种方式, 配置在decorator里面的优先级高；如果这里没有配置, 可在AppModule定义方法 ngDoBootstrap(appRef: any) {
+ appRef.bootstrap(AppComponent);
+}
+此时, 要把AppComponent添加到decorate的entryComponents里面
 
 @NgModule({
  import: [BrowserComponent],
  declarations: [AppComponent],
- exports: [AppComponent], //只是demo一下, 实际上 AppModule不会称为其它Module的Import, 所以，没必要exports AppModule的Component
+ exports: [AppComponent], //只是demo一下, 实际上 AppModule不会作为其它Module的Import, 所以, 没必要exports AppModule的Component
  providers: [Logger],
  bootstrap: [AppComponent]
 })
 export class AppModule{}
 
+或者
+
+@NgModule({
+ import: [BrowserComponent],
+ declarations: [AppComponent],
+ exports: [AppComponent], //只是demo一下, 实际上 AppModule不会作为其它Module的Import, 所以, 没必要exports AppModule的Component
+ providers: [Logger],
+ entryComponents: [
+	AppComponent
+ ] //angular在bootstrap前, 先把AppComponent事先生成对应的componentFactory, 这样才可以bootstrap
+})
+export class AppModule{
+ ngDoBootstrap (appRef: any){
+  appRef.bootstrap(AppComponent)；
+ }
+}
+
+
 # bootstrap
 .APP可以同时bootstrap多个Component
-.这些Component将会成为与之相关的Root Component, 启动之后, 会以该component形成component tree，并显示到index.html
-.bootstrap的components应该和index.html的tags对应
+.这些Component将会成为与之相关的Root Component, 启动之后, 会以该component形成component tree, 并显示到index.html
+.bootstrap的components应该和index.html的tags对应, 否则会编译不成功
 
 
 # 如何启动AppModule
-.通常会在一个ts文档中，引导启动AppModule
+.通常会在一个ts文档中, 引导启动AppModule
 .如Main.ts, 即时(Just-in-Time JIT)编译器动态编译应用
  > import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
  > import { AppModule } from './app/app.module';
@@ -42,8 +64,8 @@ export class AppModule{}
 
 
 #Components的意义
-.Component用于控制视图, 通过Modal和Event与View进行交互, 相当于AngularJS的controller
-.User在访问不同的功能模块时，Components会不停地Create, Update, Destroy
+.Component的作用是控制器, 协调Modal & event和View之间的交互(相当于AngularJS的controller)
+.User每次访问一个component的view时, Components会不停地Create, Update, Destroy, 意味component本身不会保存状态
 .Root Component(AppComponent) => Child Component(HeroListComponent) => GrandChild Component(HeroDetailComponent)
 
 
@@ -78,24 +100,26 @@ export class AppComponent{}
 .双向绑定： [(ngModule)] = 'name' ==> template <--> component
 
 # Directives
-.Angular在周期性对DOM进行调整，是根据指令提供的操作进行的
+.Angular在周期性对DOM进行调整, 是根据指令提供的操作进行的
 .Components是继承于Directives的一个特殊指令(带Template的指令), 也就是说@Component继承了@Directive
 .除了Components, 指令还有： 结构性指令和属性指令
 .结构性指令: *ngIf, *ngFor, ngSwitch, ngStyle, ngClass
 .属性指令: [ngModule]="xxx"
-*ngIf和AngularJS的ng-if效果一样，会直接从DOM删除或添加，比ng-show具有更高性能
+.*ngIf和AngularJS的ng-if效果一样, 会直接从DOM删除或添加, 比ng-show具有更高性能
+.Angular没有ng-show指令
 
 # Services
-.服务负责单一性的功能，提供值，函数，或者某个用途
+.服务负责单一性的功能, 提供值, 函数, 或者某个用途
 .服务主要为Component提供服务
-.尽量让Component轻松一点，把琐事都让Service帮忙
+.尽量让Component轻松一点, 把琐事都让Service帮忙
 
 # Dependency Injection
-.注入器维护了一个服务实例的容器，存放以前建好的实例
+.注入器维护了一个服务实例的容器, 存放以前建好的实例
 .如果没有Create, 那就立刻Create, 并上传给Angular, 给当前Component使用同时放到容器
 .要在providers告诉angular, 你要在injector创建哪些service的实例
 .通常会在root module的providers声明service, 这样其它的component就可以共用同一个实例
-.在上面介绍@Component时, 有提到它也有providers的属性，但是在这里注册，那每次component被调用，都会新建service的实例
+.在上面介绍@Component时, 有提到它也有providers的属性, 但是在这里注册, 那每次component被调用, 都会新建service的实例 (这种service应该是和component一一对应的service, 就像Avatar1.0时, 一个controller对应一个service)
+.多看看别人的代码是怎么布局代码结构的
 
 
 # Angular的其它特性：
@@ -115,8 +139,8 @@ Animations(动画), Change Detection(变更检测), Events(事件), Forms(表单
 .在写AngularJS时, 监控enter的action是当$event的value=Enter时, 才执行具体的action;但是在Angular的话, 很简单:
 <input #box (keyup.enter)="0" placeholder="Press enter to show...">
 <p>{{box.value}}</p>
-.模板引用变量定义之后，可以在兄弟节点或子节点使用，应该兄弟节点的子节点也可以用到
-.尽量传递元素(html tag 模板引用变量)的数值，而不要把整个元素传递过去
+.模板引用变量定义之后, 可以在兄弟节点或子节点使用, 应该兄弟节点的子节点也可以用到
+.尽量传递元素(html tag 模板引用变量)的数值, 而不要把整个元素传递过去
 
 
 # @Injectable() 
@@ -124,8 +148,8 @@ Animations(动画), Change Detection(变更检测), Events(事件), Forms(表单
 .假如没有这个装饰器, 则会提示错误
 .提议无论service有没有要注入其它service, 都写上@Injectable(), 理由：
   > 面向未来: 没有必要记得在后来添加依赖的时候添加 @Injectable()。
-  > 一致性:所有的服务都遵循同样的规则，不需要考虑为什么某个地方少了一个。
-.Components不是也要注入service吗, 为什么它不用@Injectable? 因为@Component, @Directive, @Pipe都已经继承@Injectable()了
+  > 一致性:所有的服务都遵循同样的规则, 不需要考虑为什么某个地方少了一个。
+.Components不是也要注入service吗, 为什么它不用@Injectable: 因为@Component, @Directive, @Pipe都已经继承@Injectable()了
 
 # providers
 .Injector需要providers为service创建实例, 然后Injector再把这些实例注入到components和services
@@ -155,6 +179,9 @@ let BuildHeroServiceFactory = (logger: NewLogger, userService: UserService) => {
 export let HeroServiceProvider = {
  {provider: HeroService, useFactory: BuildHeroServiceFactory, deps: [NewLogger, UserService]}
 }
+.provider: 注入的名称;
+.userFactory: 表示产生instance的工厂
+.deps: 表示注入到工厂的service.
 
 $$ hero.service.ts
 export class HeroService {
@@ -172,11 +199,11 @@ export class HeroService {
 .一个文档一个类(如果硬要多个类, 则把Component放到最后, 但极其不建议)
 
 # Templates Study
-.标签<script>被禁止了, 防止脚本注入的风险
+.*.html里面禁止使用标签<script>, 防止脚本注入的风险
 .<html>, <body>, <base>在Template中不会起到任何作用, 它们只适合生存于index.html
 .可以通过component和directive添加新的tag元素和attribute
 .安全导航操作符(The safe navigation operator) ?.
-  > 在template, 假如userInfo是Null或者undefined, 以下的写法会导致页面出错(这点比AngularJS严格三千尺): <p>{{UserInfo.userName}}</p>
+  > 在template, 假如userInfo是Null或者undefined, 以下的写法会导致页面出错: <p>{{UserInfo.userName}}</p>
   > 于是就建议使用 <p>{{UserInfo?.userName}}</p> ##当UserInfo是Null或Undefined时, 返回''
   > 链式写法更赞: <p>{{UserInfo?.department?.group?.groupLeader}}</p> ##哪个环节是null或者undefined, 直接返回''
 .在template中, 对象的名称假如在tempalte, directive, 对应component中相同, 使用的优先级是 tempalte > directive > component, 如 <li *ngFor="let hero of heroes">{{hero.name}}</li>, 尽管component也定义了一个hero, 这里的hero就是ngFor里面的hero
@@ -203,6 +230,7 @@ export class HeroService {
 .Attribute在渲染DOM时, 初始化了DOM Property之后, 它的任务就完成了
 .数据绑定是通过property和事件来实现的, 而不是attribute
 .在angular的世界中, attribute只做初始化的动作, 其它时间, 它得靠边站
+.那ng-disabled又怎么回事？
 
 # 绑定方式:
 .属性(Property)绑定 (Angular会去寻找directive的property, 然后在去看DOM的property)
@@ -222,6 +250,7 @@ export class HeroService {
 .样式
  > <div [style.color]="isSpecial ? 'red' : 'blue'"> 建议使用[ngStyle]
  > <button [style.font-size.%]="!isSpecial ? 150 : 50" >Small</button> => 有单位的情况
+
  
  
 # *ngFor的用法:
@@ -255,6 +284,14 @@ trackByHeroes(index: number, hero: Hero): number { return hero.id; }
 NgUpgradeModule:
 .安装: cnpm install @angular/upgrade --save
 
+# Pipes
+.使用Pure Pipe, 当数据内部元素发生改变时, angular并不会触发更新记录; 只当在改变array的引用时, 才会起效;
+.Angular只有在它检测到输入值发生了纯变更时才会执行纯管道. 纯变更是指对原始类型值(String, Number, Boolean, Symbol)的更改, 或者对对象引用(Date, Array, Function, Object)的更改.
+.为了让*ngFor等指令有效, 需要引入BrowserModule, 但是它只应该在AppModule引入的, 其它子Module为了让*ngFor等指令有效, 不能再次引入AppModule, 而只能引入CommonModule (from '@angular/common').
+.Pure Pipe Angular会忽略(复合)对象内部的更改. 如果我们更改了输入日期(Date)中的月份, 往一个输入数组(Array)中添加新值或者更新了一个输入对象(Object)的属性, Angular都不会调用纯管道. 这可能看起来是一种限制, 但它保证了速度
+.追求速度, 则对object、array改变引用; 为了方便, 则使用pure: false
+.Angular会在每个组件的变更检测周期中执行非纯管道, 非纯管道可能会被调用很多次, 和每个按键或每次鼠标移动一样频繁.
+
 
 # 风格指南
 1.单一职责: Do define one thing, such as a service or component, per file(Do: 坚持)
@@ -280,3 +317,29 @@ export function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
 }
 9.和Avatar1一样, 功能模块的组件应该按需加载
 10.超过3行的templates或者styles, 就应该从component抽离出独立的文档
+
+Open Issue:
+.ngClass和ngStyle的用法？？
+.那ng-disabled又怎么回事？
+.幂等表达式???, 最好就使用幂等表达式, 它应该总是返回完全相同的东西, 直到某个依赖发生变化; 数值型类型, 则value相同; 对象性类型, 则对象相同.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
