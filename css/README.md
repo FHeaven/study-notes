@@ -45,8 +45,8 @@ Hello,　　　how are you!
 
 ### 使用\*和Tab可以做出多级缩进的标题
 * 一级
-  * 二级
-    *三级
+  * 二级
+    * 三级
 
 
 ### 插入代码（java, typescript, javascript, c）
