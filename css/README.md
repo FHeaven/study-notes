@@ -55,8 +55,9 @@ Hello,　　　how are you!
 ![](http://www.baidu.com/img/bdlogo.gif)
 
 ### 插入网络图片有超连接
-[![baidu]](http://baidu.com)  
-[baidu]:http://www.baidu.com/img/bdlogo.gif "百度Logo"  
+[![baidu]](http://baidu.com)
+[baidu]:http://www.baidu.com/img/bdlogo.gif "百度Logo"
+
 
 ### 插入代码（java, typescript, javascript, c）
 ```typescript
