@@ -48,11 +48,15 @@ Hello,　　　how are you!
   * 二级
     * 三级
 
-### 插入图片
+### 插入网络图片
 ##### 有Mouse over
 ![](http://www.baidu.com/img/bdlogo.gif "百度logo")
 ##### 没有Mouse over
 ![](http://www.baidu.com/img/bdlogo.gif)
+
+### 插入网络图片有超连接
+[![baidu]](http://baidu.com)  
+[baidu]:http://www.baidu.com/img/bdlogo.gif "百度Logo"  
 
 ### 插入代码（java, typescript, javascript, c）
 ```typescript
