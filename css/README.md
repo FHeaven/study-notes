@@ -43,13 +43,12 @@ Hello,　　　how are you!
 ### 超链接
 [CSS Study](https://github.com/FHeaven/study-notes/new/master/css "CSS Study")  
 
-### 使用\*和Tab可以做出多级缩进的标题
+### 使用\*和Tab可以做出最多三级缩进的标题
 * 一级
   * 二级
     * 三级
-      * 四级
 
-## 另外的缩进方式 \>
+## 另外的缩进方式 \> ，可用于对其它文档的引用
 > 一级
 >> 二级
 >>> 三级
