@@ -1,6 +1,5 @@
 
 大标题
-
 ======
 
 二标题
@@ -28,7 +27,7 @@ Hello，我要再次换行<br>
 换行成功
 
 #### 超链接URL
-[heaven's study](https://github.com/FHeaven/study-notes)
+https://github.com/FHeaven/study-notes
 
 #### 输出空格请用全角空格
 Hello,　　　how are you!
@@ -43,6 +42,10 @@ Hello,　　　how are you!
 
 ### 超链接
 [CSS Study](https://github.com/FHeaven/study-notes/new/master/css "CSS Study")  
+
+#### 引用git上的图片
+![](https://github.com/FHeaven/study-notes/raw/master/git/test.png "TEST Image")
+![](https://raw.githubusercontent.com/FHeaven/study-notes/master/git/test.png "TEST Image")
 
 ### 使用\*和Tab可以做出最多三级缩进的标题
 * 一级
@@ -65,7 +68,10 @@ Hello,　　　how are you!
 
 ### 插入网络图片有超连接
 [![baidu]](http://baidu.com)
-![baidu]:(http://www.baidu.com/img/bdlogo.gif "百度Logo")
+[baidu]:http://www.baidu.com/img/bdlogo.gif "百度Logo"
+
+[![baidu]](http://baidu.com)  
+[baidu]:http://www.baidu.com/img/bdlogo.gif "百度Logo" 
 
 
 ### 插入代码（java, typescript, javascript, c）
