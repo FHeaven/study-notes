@@ -48,11 +48,7 @@ contentBase	默认webpack-dev-server会为根文件夹提供本地服务器，�
 port	设置默认监听端口，如果省略，默认为”8080“
 inline	设置为true，当源文件改变时会自动刷新页面
 historyApiFallback	在开发单页应用时非常有用，它依赖于HTML5 history API，如果设置为true，所有的跳转将指向index.html
-
-作者：zhangwang
-链接：http://www.jianshu.com/p/42e11515c10f
-來源：简书
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+。
 
 
 
