@@ -1,6 +1,6 @@
 ### npm package.json 
 #### 关于script
-code JSON
+``` javascript
 {
   "name": "01.start",
   "version": "1.0.0",
@@ -16,4 +16,5 @@ code JSON
     "webpack": "^3.10.0"
   }
 }
+```
 
